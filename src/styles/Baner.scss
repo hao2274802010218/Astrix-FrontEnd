@@ -1,0 +1,126 @@
+.baner {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    height: auto;
+    padding: 10px;
+    gap: 30px;
+    background-color: #f9e3d5;
+    .hinh-baner {
+        width: 50%;
+
+        img {
+            width: 100%;
+            height: auto;
+            border-radius: 130px;
+            overflow: auto;
+        }
+    }
+
+    .content {
+        width: 50%;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        text-align: left;
+        padding: 30px;
+
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            font-weight: bold;
+            color: #333;
+        }
+
+        p {
+            font-size: 1.2rem;
+            margin-bottom: 20px;
+            line-height: 1.6;
+            color: #555;
+        }
+
+        button {
+            width: 40%; /* Tăng kích thước nút bấm cho màn hình nhỏ hơn */
+            background-color: #007bff;
+            color: #fff;
+            padding: 10px 20px;
+            font-size: 1rem;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+
+            &:hover {
+                background-color: #0056b3;
+            }
+        }
+    }
+
+    /* Responsive Design */
+    @media (max-width: 1024px) {
+        margin: 30px;
+        background-color: #eeeeee;
+        border-radius: 25px;
+        border: 20px;
+        flex-direction: column; /* Chuyển thành cột */
+        gap: 20px;
+
+        .hinh-baner,
+        .content {
+            width: 100%; /* Mở rộng toàn bộ chiều rộng */
+            padding: 0;
+        }
+
+        .content {
+            text-align: center; /* Căn giữa nội dung */
+            h1 {
+                margin-bottom: 0px;
+            }
+            button {
+                margin: 0 auto; /* Đặt nút bấm vào giữa */
+            }
+        }
+    }
+
+    @media (max-width: 768px) {
+        gap: 15px;
+
+        h1 {
+            font-size: 1.8rem;
+        }
+
+        p {
+            font-size: 1rem;
+        }
+
+        button {
+            width: 50%; /* Điều chỉnh nút bấm vừa mắt */
+        }
+    }
+
+    @media (max-width: 480px) {
+        gap: 10px;
+
+        .hinh-baner {
+            img {
+                border-radius: 5px; /* Giảm bo góc cho ảnh nhỏ */
+            }
+        }
+
+        .content {
+            padding: 10px;
+
+            h1 {
+                font-size: 1.5rem; /* Thu nhỏ tiêu đề */
+            }
+
+            p {
+                font-size: 0.9rem;
+            }
+
+            button {
+                width: 60%; /* Điều chỉnh kích thước nút bấm */
+            }
+        }
+    }
+}
