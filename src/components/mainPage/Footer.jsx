@@ -1,18 +1,13 @@
 import React from "react";
-// import { useContext } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "@fortawesome/fontawesome-free/css/all.min.css";
-// import { AppContext } from "../../context/AppContext";
 import { Link } from "react-router-dom";
 
 const Footer = () => {
-  // const { setchooseNumber } = useContext(AppContext);
-
   const currentDate = new Date();
   const formattedDate = `${currentDate.getDate()}/${
     currentDate.getMonth() + 1
   }/${currentDate.getFullYear()}`;
-  console.log(formattedDate);
 
   return (
     <footer className="bg-dark text-white pt-4 pb-2">
@@ -38,22 +33,6 @@ const Footer = () => {
                   &#8209; Phan Lê Minh Hải / 2274802010218
                 </a>
               </li>
-              <li>
-                <a
-                  href="https://www.facebook.com/tuanvi2004"
-                  className="text-white text-decoration-none"
-                >
-                  &#8209; Vũ Nguyễn Tuấn Vĩ / 2274802010218
-                </a>
-              </li>
-              <li>
-                <a
-                  href="https://www.facebook.com/tuanvudepzai"
-                  className="text-white text-decoration-none"
-                >
-                  &#8209; Đoàn Thanh Tuấn Vũ / 2274802010218
-                </a>
-              </li>
             </ul>
           </div>
 
@@ -62,11 +41,7 @@ const Footer = () => {
             <h5>Quick Links</h5>
             <ul className="list-unstyled">
               <li>
-                <Link
-                  to="/home"
-                  className="text-white text-decoration-none"
-                  // onClick={() => setchooseNumber("Home")}
-                >
+                <Link to="/home" className="text-white text-decoration-none">
                   Home
                 </Link>
               </li>
@@ -74,26 +49,17 @@ const Footer = () => {
                 <Link
                   to="/products"
                   className="text-white text-decoration-none"
-                  // onClick={() => setchooseNumber("Products")}
                 >
                   Products
                 </Link>
               </li>
               <li>
-                <Link
-                  to="/about"
-                  className="text-white text-decoration-none"
-                  // onClick={() => setchooseNumber("About")}
-                >
+                <Link to="/about" className="text-white text-decoration-none">
                   About
                 </Link>
               </li>
               <li>
-                <Link
-                  to="/contact"
-                  className="text-white text-decoration-none"
-                  // onClick={() => setchooseNumber("Contact")}
-                >
+                <Link to="/contact" className="text-white text-decoration-none">
                   Contact
                 </Link>
               </li>
@@ -105,7 +71,7 @@ const Footer = () => {
             <h5>Contact Us</h5>
             <p>
               <i className="fas fa-envelope me-2"></i>{" "}
-              hao.2274802010218@vanlinguni.vn
+              hao.2274802010218@vanlanguni.vn
             </p>
             <p>
               <i className="fas fa-phone me-2"></i> +84 234 567 890

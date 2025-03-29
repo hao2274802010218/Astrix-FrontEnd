@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import axios from "axios";
 
 const Contact = () => {
   const [formData, setFormData] = useState({
@@ -7,16 +8,34 @@ const Contact = () => {
     message: "",
   });
 
+  const [loading, setLoading] = useState(false);
+  const [responseMessage, setResponseMessage] = useState("");
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log("Form Submitted: ", formData);
-    alert("Thank you for contacting us!");
-    setFormData({ name: "", email: "", message: "" });
+    setLoading(true);
+    setResponseMessage("");
+    alert(responseMessage);
+
+    try {
+      await axios.post("http://localhost:5000/api/contact/", formData, {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+
+      setResponseMessage("Cảm ơn bạn đã liên hệ! Chúng tôi sẽ phản hồi sớm.");
+      setFormData({ name: "", email: "", message: "" });
+    } catch (error) {
+      setResponseMessage("Gửi thất bại! Vui lòng thử lại sau.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -43,7 +62,6 @@ const Contact = () => {
           </div>
           <div className="col-md-6">
             <form onSubmit={handleSubmit} className="row g-2">
-              {/* Name Field */}
               <div className="col-12 d-flex align-items-center">
                 <label
                   htmlFor="name"
@@ -64,7 +82,6 @@ const Contact = () => {
                 />
               </div>
 
-              {/* Email Field */}
               <div className="col-12 d-flex align-items-center">
                 <label
                   htmlFor="email"
@@ -85,7 +102,6 @@ const Contact = () => {
                 />
               </div>
 
-              {/* Message Field */}
               <div className="col-12 d-flex">
                 <label
                   htmlFor="message"
@@ -106,10 +122,13 @@ const Contact = () => {
                 ></textarea>
               </div>
 
-              {/* Submit Button */}
               <div className="col-12 text-end">
-                <button type="submit" className="btn btn-primary mt-3">
-                  Send Message
+                <button
+                  type="submit"
+                  className="btn btn-primary mt-3"
+                  disabled={loading}
+                >
+                  {loading ? "Đang gửi..." : "Send Message"}
                 </button>
               </div>
             </form>

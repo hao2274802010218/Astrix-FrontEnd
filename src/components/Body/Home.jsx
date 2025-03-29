@@ -1,12 +1,12 @@
 import ControlledCarousel from "../homeComponents/ControlledCarousel";
-import ListProduct from "../homeComponents/ListProduct";
+import OutstandingProducts from "../homeComponents/OutstandingProducts";
 import Baner from "../homeComponents/Baner";
 import Introduce from "../homeComponents/Introduce";
 const Home = () => {
   return (
     <div>
       <ControlledCarousel></ControlledCarousel>
-      <ListProduct></ListProduct>
+      <OutstandingProducts></OutstandingProducts>
       <Baner></Baner>
       <Introduce></Introduce>
     </div>

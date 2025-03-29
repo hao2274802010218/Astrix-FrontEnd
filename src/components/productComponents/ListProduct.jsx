@@ -1,128 +1,56 @@
-import React, { useState, useEffect, useCallback, useMemo } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { Link } from "react-router-dom";
-import products from "../../assets/images/product.png";
 import "../../styles/ListProduct.scss";
 
 const ProductList = () => {
-  const fakeData = useMemo(
-    () => [
-      {
-        id: "1",
-        pic: products,
-        content: "Sản phẩm",
-        name: "Áo thun nam",
-        price: 300000,
-        category: "ao",
-        description:
-          "Áo thun nam chất liệu cotton cao cấp, thoáng mát và dễ chịu.",
-        sizes: ["S", "M", "L", "XL"],
-      },
-      {
-        id: "2",
-        pic: products,
-        content: "Sản phẩm",
-        name: "Quần jeans nam",
-        price: 500000,
-        category: "quan",
-        description:
-          "Quần jeans nam kiểu dáng trẻ trung, chất liệu co giãn tốt.",
-        sizes: ["28", "30", "32", "34"],
-      },
-      {
-        id: "3",
-        pic: products,
-        content: "Sản phẩm",
-        name: "Áo sơ mi nam",
-        price: 400000,
-        category: "ao",
-        description:
-          "Áo sơ mi nam vải lụa cao cấp, phù hợp môi trường công sở.",
-        sizes: ["M", "L", "XL"],
-      },
-      {
-        id: "4",
-        pic: products,
-        content: "Sản phẩm",
-        name: "Áo khoác nam",
-        price: 700000,
-        category: "ao",
-        description: "Áo khoác nam chống gió, phù hợp cho mùa đông lạnh giá.",
-        sizes: ["M", "L", "XL"],
-      },
-      {
-        id: "5",
-        pic: products,
-        content: "Sản phẩm",
-        name: "Giày thể thao",
-        price: 800000,
-        category: "giay",
-        description: "Giày thể thao nam năng động, đế êm ái và bền bỉ.",
-        sizes: ["39", "40", "41", "42", "43"],
-      },
-      {
-        id: "6",
-        pic: products,
-        content: "Sản phẩm",
-        name: "Mũ lưỡi trai",
-        price: 150000,
-        category: "mu",
-        description: "Mũ lưỡi trai nam thời trang, chất liệu vải thoáng khí.",
-        sizes: [],
-      },
-      {
-        id: "7",
-        pic: products,
-        content: "Sản phẩm",
-        name: "Balo laptop",
-        price: 600000,
-        category: "balo",
-        description:
-          "Balo laptop chống nước, phù hợp cho công việc và du lịch.",
-        sizes: [],
-      },
-      {
-        id: "8",
-        pic: products,
-        content: "Sản phẩm",
-        name: "Quần short nam",
-        price: 250000,
-        category: "quan",
-        description:
-          "Quần short nam thoải mái, phù hợp cho các hoạt động ngoài trời.",
-        sizes: ["S", "M", "L", "XL"],
-      },
-      {
-        id: "9",
-        pic: products,
-        content: "Sản phẩm",
-        name: "Dép nam",
-        price: 200000,
-        category: "giay",
-        description: "Dép nam kiểu dáng hiện đại, đế cao su chống trơn trượt.",
-        sizes: ["39", "40", "41", "42", "43"],
-      },
-      {
-        id: "10",
-        pic: products,
-        content: "Sản phẩm",
-        name: "Túi đeo chéo",
-        price: 450000,
-        category: "balo",
-        description: "Túi đeo chéo nam thời trang, chất liệu chống thấm nước.",
-        sizes: [],
-      },
-    ],
-    []
-  );
-
-  const [productsList, setProductsList] = useState(fakeData);
+  const [filteredProductsList, setFilteredProductsList] = useState([]);
+  const [productsList, setProductsList] = useState([]);
+  const [categoriesList, setCategoriesList] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [priceFilter, setPriceFilter] = useState("");
   const [categoryFilter, setCategoryFilter] = useState("");
   const [sortOrder, setSortOrder] = useState("");
+  const [currentPage, setCurrentPage] = useState(1);
+
+  const productsPerPage = 12;
+  const totalPages = Math.ceil(filteredProductsList.length / productsPerPage);
+
+  const fetchProducts = useCallback(async () => {
+    try {
+      const response = await fetch("http://localhost:5000/api/products");
+      if (!response.ok) {
+        throw new Error(`Error: ${response.status} ${response.statusText}`);
+      }
+      const dataProducts = await response.json();
+      setProductsList(dataProducts);
+    } catch (error) {
+      console.error("Error fetching products:", error.message);
+    }
+  }, []);
+
+  useEffect(() => {
+    fetchProducts();
+  }, [fetchProducts]);
+
+  const fetchCatelogy = useCallback(async () => {
+    try {
+      const response = await fetch("http://localhost:5000/api/categories");
+      if (!response.ok) {
+        throw new Error(`Error: ${response.status} ${response.statusText}`);
+      }
+      const dataCatelogy = await response.json();
+      setCategoriesList(dataCatelogy);
+    } catch (error) {
+      console.error("Error fetching products:", error.message);
+    }
+  }, []);
+
+  useEffect(() => {
+    fetchCatelogy();
+  }, [fetchCatelogy]);
 
   const handleFilterAndSort = useCallback(() => {
-    let filteredProducts = [...fakeData];
+    let filteredProducts = [...productsList];
 
     if (searchTerm) {
       filteredProducts = filteredProducts.filter((product) =>
@@ -157,12 +85,29 @@ const ProductList = () => {
       filteredProducts.sort((a, b) => b.price - a.price);
     }
 
-    setProductsList(filteredProducts);
-  }, [searchTerm, priceFilter, categoryFilter, sortOrder, fakeData]);
+    setFilteredProductsList(filteredProducts);
+    setCurrentPage(1);
+  }, [searchTerm, priceFilter, categoryFilter, sortOrder, productsList]);
 
   useEffect(() => {
     handleFilterAndSort();
   }, [handleFilterAndSort]);
+
+  const indexOfLastProduct = currentPage * productsPerPage;
+  const indexOfFirstProduct = indexOfLastProduct - productsPerPage;
+  const currentProducts = filteredProductsList.slice(
+    indexOfFirstProduct,
+    indexOfLastProduct
+  );
+
+  const handlePageChange = (pageNumber) => {
+    setCurrentPage(pageNumber);
+  };
+
+  const pageNumbers = [];
+  for (let i = 1; i <= totalPages; i++) {
+    pageNumbers.push(i);
+  }
 
   return (
     <div className="container" style={{ marginTop: "30px" }}>
@@ -200,11 +145,13 @@ const ProductList = () => {
             onChange={(e) => setCategoryFilter(e.target.value)}
           >
             <option value="">Loại sản phẩm</option>
-            <option value="ao">Áo</option>
-            <option value="quan">Quần</option>
-            <option value="mu">Mũ</option>
-            <option value="giay">Giầy</option>
-            <option value="balo">Balo</option>
+            {categoriesList.length
+              ? categoriesList.map((category) => (
+                  <option key={category._id} value={category.name}>
+                    {category.name}
+                  </option>
+                ))
+              : ""}
           </select>
         </div>
         <div>
@@ -221,15 +168,18 @@ const ProductList = () => {
         </div>
       </div>
       <div className="list-product mt-4">
-        {productsList.length ? (
-          productsList.map((product) => (
+        {currentProducts.length ? (
+          currentProducts.map((product) => (
             <Link
-              key={product.id}
-              to={`/products/${product.id}`}
+              key={product._id}
+              to={`/products/${product._id}`}
               style={{ textDecoration: "none" }}
             >
               <div className="product">
-                <img src={product.pic} alt={product.content} />
+                <img
+                  src={`http://localhost:5000${product.pic}`}
+                  alt={product.content}
+                />
                 <h3>{product.name}</h3>
                 <p>{product.price.toLocaleString()} VND</p>
               </div>
@@ -239,6 +189,50 @@ const ProductList = () => {
           <p>Không tìm thấy sản phẩm.</p>
         )}
       </div>
+
+      {totalPages > 1 && (
+        <nav className="mt-4 mb-4">
+          <ul className="pagination pagination-lg justify-content-end">
+            <li className={`page-item ${currentPage === 1 ? "disabled" : ""}`}>
+              <button
+                className="page-link"
+                onClick={() => handlePageChange(currentPage - 1)}
+                aria-label="Previous"
+              >
+                <span aria-hidden="true">&laquo;</span>
+              </button>
+            </li>
+            {pageNumbers.map((number) => (
+              <li
+                key={number}
+                className={`page-item ${
+                  currentPage === number ? "active" : ""
+                }`}
+              >
+                <button
+                  className="page-link"
+                  onClick={() => handlePageChange(number)}
+                >
+                  {number}
+                </button>
+              </li>
+            ))}
+            <li
+              className={`page-item ${
+                currentPage === totalPages ? "disabled" : ""
+              }`}
+            >
+              <button
+                className="page-link"
+                onClick={() => handlePageChange(currentPage + 1)}
+                aria-label="Next"
+              >
+                <span aria-hidden="true">&raquo;</span>
+              </button>
+            </li>
+          </ul>
+        </nav>
+      )}
     </div>
   );
 };

@@ -1,197 +1,154 @@
-import React, { useState } from "react";
-import { useParams, useNavigate } from "react-router-dom";
-import products from "../../assets/images/product.png";
+import React, { useState, useEffect } from "react";
+import { useNavigate, useParams } from "react-router-dom";
+import { useId } from "../../context/RoleContext";
 
 const ProductDetail = () => {
-  const { productId } = useParams();
+  const { id } = useParams();
   const navigate = useNavigate();
+  const { whatYouId } = useId();
+  const [product, setProduct] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+  const [successMessage, setSuccessMessage] = useState("");
   const [selectedSize, setSelectedSize] = useState(null);
+  const [addingToCart, setAddingToCart] = useState(false);
 
-  const fakeData = [
-    {
-      id: "1",
-      pic: products,
-      content: "Sản phẩm",
-      name: "Áo thun nam",
-      price: 300000,
-      category: "ao",
-      description:
-        "Áo thun nam chất liệu cotton cao cấp, thoáng mát và dễ chịu.",
-      sizes: ["S", "M", "L", "XL"],
-    },
-    {
-      id: "2",
-      pic: products,
-      content: "Sản phẩm",
-      name: "Quần jeans nam",
-      price: 500000,
-      category: "quan",
-      description: "Quần jeans nam kiểu dáng trẻ trung, chất liệu co giãn tốt.",
-      sizes: ["28", "30", "32", "34"],
-    },
-    {
-      id: "3",
-      pic: products,
-      content: "Sản phẩm",
-      name: "Áo sơ mi nam",
-      price: 400000,
-      category: "ao",
-      description: "Áo sơ mi nam vải lụa cao cấp, phù hợp môi trường công sở.",
-      sizes: ["M", "L", "XL"],
-    },
-    {
-      id: "4",
-      pic: products,
-      content: "Sản phẩm",
-      name: "Áo khoác nam",
-      price: 700000,
-      category: "ao",
-      description: "Áo khoác nam chống gió, phù hợp cho mùa đông lạnh giá.",
-      sizes: ["M", "L", "XL"],
-    },
-    {
-      id: "5",
-      pic: products,
-      content: "Sản phẩm",
-      name: "Giày thể thao",
-      price: 800000,
-      category: "giay",
-      description: "Giày thể thao nam năng động, đế êm ái và bền bỉ.",
-      sizes: ["39", "40", "41", "42", "43"],
-    },
-    {
-      id: "6",
-      pic: products,
-      content: "Sản phẩm",
-      name: "Mũ lưỡi trai",
-      price: 150000,
-      category: "mu",
-      description: "Mũ lưỡi trai nam thời trang, chất liệu vải thoáng khí.",
-      sizes: [],
-    },
-    {
-      id: "7",
-      pic: products,
-      content: "Sản phẩm",
-      name: "Balo laptop",
-      price: 600000,
-      category: "balo",
-      description: "Balo laptop chống nước, phù hợp cho công việc và du lịch.",
-      sizes: [],
-    },
-    {
-      id: "8",
-      pic: products,
-      content: "Sản phẩm",
-      name: "Quần short nam",
-      price: 250000,
-      category: "quan",
-      description:
-        "Quần short nam thoải mái, phù hợp cho các hoạt động ngoài trời.",
-      sizes: ["S", "M", "L", "XL"],
-    },
-    {
-      id: "9",
-      pic: products,
-      content: "Sản phẩm",
-      name: "Dép nam",
-      price: 200000,
-      category: "giay",
-      description: "Dép nam kiểu dáng hiện đại, đế cao su chống trơn trượt.",
-      sizes: ["39", "40", "41", "42", "43"],
-    },
-    {
-      id: "10",
-      pic: products,
-      content: "Sản phẩm",
-      name: "Túi đeo chéo",
-      price: 450000,
-      category: "balo",
-      description: "Túi đeo chéo nam thời trang, chất liệu chống thấm nước.",
-      sizes: [],
-    },
-  ];
+  useEffect(() => {
+    const fetchProduct = async () => {
+      try {
+        const response = await fetch(
+          `http://localhost:5000/api/products/${id}`
+        );
+        if (!response.ok) {
+          throw new Error("Không tìm thấy sản phẩm hoặc lỗi server!");
+        }
+        const data = await response.json();
+        setProduct(data);
+      } catch (error) {
+        setError(error.message);
+      } finally {
+        setLoading(false);
+      }
+    };
 
-  const chooseProduct = fakeData.find((product) => product.id === productId);
+    fetchProduct();
+  }, [id]);
 
-  if (!chooseProduct) {
-    return (
-      <div className="container mt-5 mb-5">
-        <h1 className="text-center text-danger">Sản phẩm không tồn tại</h1>
-        <button
-          className="btn btn-secondary mt-3"
-          onClick={() => navigate(-1)}
-          style={{ display: "block", margin: "0 auto" }}
-        >
-          Quay lại
-        </button>
-      </div>
-    );
-  }
-
-  const handleAddToCart = () => {
-    if (chooseProduct.sizes?.length && !selectedSize) {
-      alert("Vui lòng chọn size trước khi thêm vào giỏ hàng!");
+  const handleAddToCart = async () => {
+    if (product?.sizes?.length && !selectedSize) {
+      setError("Vui lòng chọn size trước khi thêm vào giỏ hàng!");
       return;
     }
-    alert(
-      `${chooseProduct.name}${
-        selectedSize ? ` size (${selectedSize})` : ""
-      } đã được thêm vào giỏ hàng!`
-    );
+
+    setError("");
+    setAddingToCart(true);
+
+    try {
+      const response = await fetch("http://localhost:5000/api/cart", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          userId: whatYouId,
+          productId: product._id,
+          pic: product.pic,
+          name: product.name,
+          size: selectedSize || "Default",
+          price: product.price,
+          quantity: 1,
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error("Bạn chưa đăng nhập nên không thể thêm vào giỏ hàng!");
+      }
+
+      setSuccessMessage(
+        `🛒 ${product.name} size (${
+          selectedSize || "Default"
+        }) đã thêm vào giỏ hàng!`
+      );
+      setTimeout(() => setSuccessMessage(), 3000);
+    } catch (error) {
+      setError(error.message);
+    } finally {
+      setAddingToCart(false);
+    }
   };
 
+  if (loading) {
+    return <div className="text-center mt-5">Đang tải dữ liệu...</div>;
+  }
+
   return (
-    <div className="container mt-5 mb-5">
+    <div className="container mt-4 mb-3">
       <div className="row align-items-center">
         <div className="col-md-6 text-center">
           <img
-            src={chooseProduct.pic}
-            alt={chooseProduct.name}
+            src={`http://localhost:5000${product.pic}`}
+            alt={product.content}
             className="img-fluid rounded shadow"
-            style={{ maxWidth: "80%", border: "1px solid #ddd" }}
+            style={{
+              maxWidth: "80%",
+              border: "1px solid #ddd",
+              marginBottom: "20px",
+            }}
           />
         </div>
         <div className="col-md-6">
-          <h1 className="text-start fw-bold">{chooseProduct.name}</h1>
+          {successMessage && (
+            <div className="alert alert-success text-center">
+              {successMessage}
+            </div>
+          )}
+          <h1 className="text-start fw-bold">{product.name}</h1>
           <h4 className="text-danger fw-bold mb-3">
-            {chooseProduct.price.toLocaleString()} VND
+            {product.price.toLocaleString()} VND
           </h4>
-          <p className="text-muted">{chooseProduct.description}</p>
+          <p className="text-muted">{product.description}</p>
 
-          {chooseProduct.sizes?.length > 0 && (
+          {product.sizes?.length > 0 && (
             <div className="mb-4">
               <label htmlFor="sizeSelect" className="form-label fw-semibold">
                 Chọn size:
               </label>
               <div className="d-flex gap-2 justify-content-start">
-                {chooseProduct.sizes.map((size, index) => (
+                {product.sizes.map((size, index) => (
                   <button
                     key={index}
                     className={`btn ${
                       selectedSize === size
-                        ? "btn-primary"
+                        ? "btn-secondary"
                         : "btn-outline-secondary"
                     }`}
                     style={{ width: "60px" }}
-                    onClick={() => setSelectedSize(size)}
+                    onClick={() => {
+                      setSelectedSize(size);
+                      setError("");
+                    }}
                   >
                     {size}
                   </button>
                 ))}
               </div>
+              {error && (
+                <div style={{ color: "red", marginTop: "8px" }}>{error}</div>
+              )}
             </div>
           )}
 
           <button
-            className="btn btn-primary w-100 py-2 fw-bold mb-3"
+            className="btn btn-success w-100 py-2 fw-bold mb-3"
             onClick={handleAddToCart}
+            disabled={addingToCart}
             style={{
               borderRadius: "10px",
               boxShadow: "0 4px 6px rgba(0, 0, 0, 0.1)",
+              opacity: addingToCart ? 0.6 : 1,
             }}
           >
-            Thêm vào giỏ hàng
+            {addingToCart ? "Đang thêm..." : "Thêm vào giỏ hàng"}
           </button>
 
           <button

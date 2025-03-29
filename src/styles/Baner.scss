@@ -6,14 +6,14 @@
     padding: 10px;
     gap: 30px;
     background-color: #f9e3d5;
+
     .hinh-baner {
         width: 50%;
-
         img {
             width: 100%;
             height: auto;
             border-radius: 130px;
-            overflow: auto;
+            overflow: hidden;
         }
     }
 
@@ -40,7 +40,7 @@
         }
 
         button {
-            width: 40%; /* Tăng kích thước nút bấm cho màn hình nhỏ hơn */
+            width: 40%;
             background-color: #007bff;
             color: #fff;
             padding: 10px 20px;
@@ -58,68 +58,76 @@
 
     /* Responsive Design */
     @media (max-width: 1024px) {
-        margin: 30px;
-        background-color: #eeeeee;
-        border-radius: 25px;
-        border: 20px;
         flex-direction: column; /* Chuyển thành cột */
         gap: 20px;
+        background-color: #eeeeee;
+        border-radius: 25px;
 
         .hinh-baner,
         .content {
-            width: 100%; /* Mở rộng toàn bộ chiều rộng */
-            padding: 0;
+            width: 100%;
+            padding: 0; /* Loại bỏ padding */
         }
 
         .content {
-            text-align: center; /* Căn giữa nội dung */
+            text-align: center;
+            padding: 20px;
+
             h1 {
-                margin-bottom: 0px;
+                font-size: 2rem;
             }
+
             button {
-                margin: 0 auto; /* Đặt nút bấm vào giữa */
+                width: 50%; /* Điều chỉnh kích thước nút bấm */
+                margin: 0 auto; /* Căn giữa nút bấm */
             }
         }
     }
 
     @media (max-width: 768px) {
         gap: 15px;
+        padding: 15px;
 
-        h1 {
-            font-size: 1.8rem;
-        }
+        .content {
+            h1 {
+                font-size: 1.8rem; /* Thu nhỏ kích thước tiêu đề */
+            }
 
-        p {
-            font-size: 1rem;
-        }
+            p {
+                font-size: 1rem; /* Thu nhỏ kích thước chữ mô tả */
+            }
 
-        button {
-            width: 50%; /* Điều chỉnh nút bấm vừa mắt */
+            button {
+                width: 60%; /* Điều chỉnh nút bấm */
+            }
         }
     }
 
     @media (max-width: 480px) {
         gap: 10px;
+        padding: 10px;
 
         .hinh-baner {
             img {
-                border-radius: 5px; /* Giảm bo góc cho ảnh nhỏ */
+                border-radius: 10px; /* Giảm bo góc cho ảnh nhỏ */
             }
         }
 
         .content {
+            text-align: center; /* Căn giữa nội dung */
             padding: 10px;
 
             h1 {
-                font-size: 1.5rem; /* Thu nhỏ tiêu đề */
+                font-size: 1.5rem; /* Giảm kích thước tiêu đề */
             }
 
             p {
-                font-size: 0.9rem;
+                font-size: 0.9rem; /* Giảm kích thước chữ mô tả */
             }
 
             button {
-                width: 60%; /* Điều chỉnh kích thước nút bấm */
+                width: 70%; /* Nút bấm rộng hơn để dễ bấm */
+                font-size: 0.9rem;
             }
         }
     }
