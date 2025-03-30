@@ -48,7 +48,7 @@ const OrderManagement = () => {
     order.username?.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
-  const handleUpdateStatus = async (id, status) => {
+  const handleUpdateStatus = async (id, status, email) => {
     try {
       const response = await axios.put(
         `http://localhost:5000/api/checkout/order/${id}/status`,

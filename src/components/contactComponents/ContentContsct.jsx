@@ -20,7 +20,6 @@ const Contact = () => {
     e.preventDefault();
     setLoading(true);
     setResponseMessage("");
-    alert(responseMessage);
 
     try {
       await axios.post("http://localhost:5000/api/contact/", formData, {
@@ -36,6 +35,7 @@ const Contact = () => {
     } finally {
       setLoading(false);
     }
+    alert(responseMessage);
   };
 
   return (

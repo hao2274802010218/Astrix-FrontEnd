@@ -15,12 +15,13 @@ const Checkout = () => {
     note: "",
     paymentMethod: "Cash on Delivery",
   });
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     const fetchCart = async () => {
       try {
         if (!whatYouId) {
-          navigate("/login"); // Chuyển hướng nếu chưa đăng nhập
+          navigate("/login");
           return;
         }
 
@@ -70,6 +71,7 @@ const Checkout = () => {
       return;
     }
 
+    setIsLoading(true);
     const orderData = {
       ...formData,
       cart,
@@ -93,13 +95,15 @@ const Checkout = () => {
         throw new Error(errorData.message || "Lỗi khi đặt hàng!");
       }
 
-      await response.json(); // Không cần gán biến nếu không dùng
+      await response.json();
       alert("Đơn hàng của bạn đã được đặt thành công!");
       await clearCart();
-      navigate("/products");
+      navigate("/cart");
     } catch (error) {
       console.error("Checkout error:", error.message);
       alert(`Đã xảy ra lỗi: ${error.message}`);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -174,7 +178,7 @@ const Checkout = () => {
           <label htmlFor="address" className="form-label">
             Địa chỉ
           </label>
-          <textarea // Sửa thành textarea nếu cần nhập đa dòng
+          <textarea
             id="address"
             name="address"
             className="form-control"
@@ -263,11 +267,27 @@ const Checkout = () => {
             type="button"
             onClick={() => navigate(-1)}
             className="btn btn-outline-secondary w-50"
+            disabled={isLoading}
           >
             Quay Lại
           </button>
-          <button type="submit" className="btn btn-primary w-50">
-            Thanh toán
+          <button
+            type="submit"
+            className="btn btn-primary w-50"
+            disabled={isLoading}
+          >
+            {isLoading ? (
+              <>
+                <span
+                  className="spinner-border spinner-border-sm me-2"
+                  role="status"
+                  aria-hidden="true"
+                ></span>
+                Đang xử lý...
+              </>
+            ) : (
+              "Thanh toán"
+            )}
           </button>
         </div>
       </form>
