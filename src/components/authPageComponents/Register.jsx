@@ -7,7 +7,6 @@ const Register = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [username, setUsername] = useState("");
-  const [phone, setPhone] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
   const [successMessage, setSuccessMessage] = useState("");
@@ -30,13 +29,11 @@ const Register = () => {
           email,
           password,
           username,
-          phone,
         }
       );
 
       setSuccessMessage(response.data.message);
       setEmail("");
-      setPhone("");
       setPassword("");
       setUsername("");
       setConfirmPassword("");
@@ -81,17 +78,6 @@ const Register = () => {
               placeholder="Nhập họ và tên"
               value={username}
               onChange={(e) => setUsername(e.target.value)}
-              required
-            />
-          </div>
-          <div className="mb-3">
-            <label className="form-label">Số điện thoại</label>
-            <input
-              type="text"
-              className="form-control"
-              placeholder="Nhập số điện thoại"
-              value={phone}
-              onChange={(e) => setPhone(e.target.value)}
               required
             />
           </div>

@@ -110,7 +110,7 @@ const ViewOrderDetail = () => {
       </div>
       <div className="card mt-4 p-4 shadow-sm">
         <h4 className="fw-bold">Sản phẩm trong đơn hàng</h4>
-        <table className="table table-striped mt-3">
+        <table className="table  mt-3">
           <thead>
             <tr>
               <th className="text-center">Hình ảnh</th>

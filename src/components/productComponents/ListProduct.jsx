@@ -191,13 +191,12 @@ const ProductList = () => {
       </div>
 
       {totalPages > 1 && (
-        <nav className="mt-4 mb-4">
-          <ul className="pagination pagination-lg justify-content-end">
-            <li className={`page-item ${currentPage === 1 ? "disabled" : ""}`}>
+        <nav className="mt-4">
+          <ul className="pagination justify-content-center">
+            <li className={currentPage === 1 ? "disabled" : ""}>
               <button
                 className="page-link"
                 onClick={() => handlePageChange(currentPage - 1)}
-                aria-label="Previous"
               >
                 <span aria-hidden="true">&laquo;</span>
               </button>
@@ -205,9 +204,7 @@ const ProductList = () => {
             {pageNumbers.map((number) => (
               <li
                 key={number}
-                className={`page-item ${
-                  currentPage === number ? "active" : ""
-                }`}
+                className={currentPage === number ? "active" : ""}
               >
                 <button
                   className="page-link"
@@ -217,15 +214,10 @@ const ProductList = () => {
                 </button>
               </li>
             ))}
-            <li
-              className={`page-item ${
-                currentPage === totalPages ? "disabled" : ""
-              }`}
-            >
+            <li className={currentPage === totalPages ? "disabled" : ""}>
               <button
                 className="page-link"
                 onClick={() => handlePageChange(currentPage + 1)}
-                aria-label="Next"
               >
                 <span aria-hidden="true">&raquo;</span>
               </button>

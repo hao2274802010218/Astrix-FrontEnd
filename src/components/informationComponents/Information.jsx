@@ -39,7 +39,9 @@ const Information = () => {
             <hr className="flex-grow-1" />
           </div>
           <div>
-            <h3 className="text-center">Danh sách đơn hàng của bạn</h3>
+            <h3 className="card-title text-center">
+              Danh sách đơn hàng của bạn
+            </h3>
             <OrderList />
           </div>
           <div className="d-flex justify-content-end">

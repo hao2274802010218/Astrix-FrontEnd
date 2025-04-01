@@ -34,7 +34,6 @@ const OrderManagement = () => {
       );
       setOrderData(response.data.checkouts || []);
     } catch (err) {
-      alert("Có lỗi xảy ra khi lấy dữ liệu đơn hàng.");
     } finally {
       setLoading(false);
     }
@@ -48,13 +47,13 @@ const OrderManagement = () => {
     order.username?.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
-  const handleUpdateStatus = async (id, status, email) => {
+  const handleUpdateStatus = async (id, status) => {
     try {
       const response = await axios.put(
         `http://localhost:5000/api/checkout/order/${id}/status`,
         { status }
       );
-      if (response.data && response.data.order) {
+      if (response.data.success && response.data.order) {
         setOrderData((prevData) =>
           prevData.map((order) =>
             order._id === id
@@ -64,11 +63,11 @@ const OrderManagement = () => {
         );
         alert("Cập nhật trạng thái thành công!");
       } else {
-        throw new Error("Phản hồi API không hợp lệ");
+        throw new Error(response.data.message || "Phản hồi API không hợp lệ");
       }
     } catch (error) {
       console.error("Lỗi cập nhật trạng thái:", error);
-      alert("Cập nhật trạng thái thất bại.");
+      alert(`Cập nhật trạng thái thất bại: ${error.message}`);
     }
   };
 

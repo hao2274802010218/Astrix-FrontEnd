@@ -11,6 +11,7 @@ const ProductDetail = () => {
   const [error, setError] = useState("");
   const [successMessage, setSuccessMessage] = useState("");
   const [selectedSize, setSelectedSize] = useState(null);
+  const [quantity, setQuantity] = useState(1);
   const [addingToCart, setAddingToCart] = useState(false);
 
   useEffect(() => {
@@ -56,7 +57,7 @@ const ProductDetail = () => {
           name: product.name,
           size: selectedSize || "Default",
           price: product.price,
-          quantity: 1,
+          quantity: quantity,
         }),
       });
 
@@ -67,9 +68,9 @@ const ProductDetail = () => {
       setSuccessMessage(
         `🛒 ${product.name} size (${
           selectedSize || "Default"
-        }) đã thêm vào giỏ hàng!`
+        }) x${quantity} đã thêm vào giỏ hàng!`
       );
-      setTimeout(() => setSuccessMessage(), 3000);
+      setTimeout(() => setSuccessMessage(""), 3000);
     } catch (error) {
       setError(error.message);
     } finally {
@@ -107,6 +108,35 @@ const ProductDetail = () => {
             {product.price.toLocaleString()} VND
           </h4>
           <p className="text-muted">{product.description}</p>
+
+          <div className="mb-2">
+            <label className="form-label fw-semibold">Số lượng:</label>
+            <div className="input-group">
+              <button
+                className="btn btn-outline-secondary"
+                type="button"
+                onClick={() => setQuantity((prev) => Math.max(1, prev - 1))}
+                disabled={quantity <= 1}
+              >
+                <i className="bi bi-dash"></i>
+              </button>
+              <button
+                className="form-control text-center btn"
+                type="button"
+                style={{ maxWidth: "50px", cursor: "default" }}
+                disabled
+              >
+                {quantity}
+              </button>
+              <button
+                className="btn btn-outline-secondary"
+                type="button"
+                onClick={() => setQuantity((prev) => prev + 1)}
+              >
+                <i className="bi bi-plus"></i>
+              </button>
+            </div>
+          </div>
 
           {product.sizes?.length > 0 && (
             <div className="mb-4">

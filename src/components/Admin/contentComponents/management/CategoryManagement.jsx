@@ -124,7 +124,7 @@ const CategoryManagement = () => {
           <tr className="text-center">
             <th>#</th>
             <th>Tên danh mục</th>
-            <th>Chức năng</th>
+            <th>Hành động</th>
           </tr>
         </thead>
         <tbody>

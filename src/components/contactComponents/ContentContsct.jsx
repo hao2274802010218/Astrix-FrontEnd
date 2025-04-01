@@ -29,13 +29,13 @@ const Contact = () => {
       });
 
       setResponseMessage("Cảm ơn bạn đã liên hệ! Chúng tôi sẽ phản hồi sớm.");
+      alert(responseMessage);
       setFormData({ name: "", email: "", message: "" });
     } catch (error) {
       setResponseMessage("Gửi thất bại! Vui lòng thử lại sau.");
     } finally {
       setLoading(false);
     }
-    alert(responseMessage);
   };
 
   return (

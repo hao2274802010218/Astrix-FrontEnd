@@ -9,45 +9,42 @@ const OrderList = () => {
   const { whatYouId } = useId();
 
   const getStatusBadgeColor = (status) => {
-    switch (status) {
-      case "Đang xử lý":
-        return "warning";
-      case "Đã xác nhận":
-        return "info";
-      case "Đang chuẩn bị hàng":
-        return "primary";
-      case "Đang giao":
-        return "secondary";
-      case "Đã giao":
-        return "success";
-      case "Đã hủy":
-        return "danger";
-      default:
-        return "light";
-    }
+    const statusColors = {
+      "Đang xử lý": "warning",
+      "Đã xác nhận": "info",
+      "Đang chuẩn bị hàng": "primary",
+      "Đang giao": "secondary",
+      "Đã giao": "success",
+      "Đã hủy": "danger",
+    };
+    return statusColors[status] || "light";
   };
 
   useEffect(() => {
     const fetchOrdersData = async () => {
-      setIsLoading(true);
       try {
         if (!whatYouId) {
-          setError("Vui lòng đăng nhập để xem đơn hàng");
-          return;
+          throw new Error("Vui lòng đăng nhập để xem đơn hàng");
         }
 
+        setIsLoading(true);
         const response = await fetch(
-          `http://localhost:5000/api/checkout/order/user/${whatYouId}` // Đúng route
+          `http://localhost:5000/api/checkout/order/user/${whatYouId}`
         );
 
         if (!response.ok) {
-          throw new Error("Không thể tải danh sách đơn hàng");
+          const errorData = await response.json();
+          throw new Error(errorData.message || "Lỗi không xác định từ server");
         }
 
         const data = await response.json();
-        setOrders(Array.isArray(data.orders) ? data.orders : []);
+        if (!data.success) {
+          throw new Error(data.message || "Không thể tải danh sách đơn hàng");
+        }
+        setOrders(Array.isArray(data.data?.orders) ? data.data.orders : []);
       } catch (err) {
         setError(err.message);
+        setOrders([]);
       } finally {
         setIsLoading(false);
       }
@@ -56,52 +53,68 @@ const OrderList = () => {
     fetchOrdersData();
   }, [whatYouId]);
 
-  if (isLoading) return <p>Đang tải dữ liệu...</p>;
-  if (error) return <p className="text-danger">{error}</p>;
-  if (!Array.isArray(orders) || orders.length === 0)
-    return <div className="alert alert-info mt-3">Không có đơn hàng nào!</div>;
+  if (isLoading) {
+    return <div className="text-center mt-3">Đang tải dữ liệu...</div>;
+  }
+
+  if (error) {
+    return <div className="alert alert-danger mt-3">{error}</div>;
+  }
+
+  if (orders.length === 0) {
+    return (
+      <div className="alert alert-warning mt-3">Không có đơn hàng nào!</div>
+    );
+  }
 
   return (
-    <div>
-      <table className="table table-bordered mt-3 text-center align-middle">
-        <thead>
-          <tr className="text-center">
-            <th>#</th>
-            <th>Tên sản phẩm</th>
-            <th>Tổng tiền</th>
-            <th>Trạng thái</th>
-            <th>Chi tiết</th>
+    <div className="container mt-3">
+      <table className="table table-bordered text-center align-middle">
+        <thead className="table-light">
+          <tr>
+            <th scope="col">#</th>
+            <th scope="col">Tên sản phẩm</th>
+            <th scope="col">Tổng tiền</th>
+            <th scope="col">Trạng thái</th>
+            <th scope="col">Chi tiết</th>
           </tr>
         </thead>
         <tbody>
           {orders.map((order, index) => (
-            <tr key={order._id}>
+            <tr key={order._id || index}>
               <td>{index + 1}</td>
               <td>
-                <table className="table table-bordered text-start align-middle">
+                <table className="table table-bordered mb-0">
                   <thead>
                     <tr>
-                      <th style={{ width: "70%" }}>Product Name</th>
-                      <th style={{ width: "30%" }}>Size</th>
+                      <th style={{ width: "70%" }}>Tên sản phẩm</th>
+                      <th style={{ width: "30%" }}>Kích thước</th>
                     </tr>
                   </thead>
                   <tbody>
-                    {order.cart.map((item, idx) => (
-                      <tr key={idx}>
-                        <td>{item.name}</td>
-                        <td>{item.size || "N/A"}</td>
+                    {Array.isArray(order.cart) && order.cart.length > 0 ? (
+                      order.cart.map((item, idx) => (
+                        <tr key={`${order._id}-${idx}`}>
+                          <td>{item.name || "Không xác định"}</td>
+                          <td>{item.size || "N/A"}</td>
+                        </tr>
+                      ))
+                    ) : (
+                      <tr>
+                        <td colSpan="2">Không có sản phẩm</td>
                       </tr>
-                    ))}
+                    )}
                   </tbody>
                 </table>
               </td>
-              <td>{order.total?.toLocaleString()} VND</td>
+              <td>
+                {order.total
+                  ? `${order.total.toLocaleString()} VND`
+                  : "Chưa cập nhật"}
+              </td>
               <td>
                 <span
-                  className={`btn btn-${getStatusBadgeColor(
-                    order.status
-                  )} btn-sm`}
-                  style={{ pointerEvents: "none" }}
+                  className={`badge bg-${getStatusBadgeColor(order.status)}`}
                 >
                   {order.status || "Chưa cập nhật"}
                 </span>

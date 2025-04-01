@@ -67,7 +67,7 @@ const RoleManagement = () => {
         <input
           type="text"
           className="form-control w-50"
-          placeholder="Search by username..."
+          placeholder="Tìm kiếm theo tên người dùng..."
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
         />
@@ -77,10 +77,10 @@ const RoleManagement = () => {
         <thead>
           <tr className="text-center">
             <th>#</th>
-            <th>Username</th>
+            <th>Tên người dùng</th>
             <th>Email</th>
-            <th>Role</th>
-            <th>Actions</th>
+            <th>Vai trò</th>
+            <th>Hành động</th>
           </tr>
         </thead>
         <tbody>
@@ -119,7 +119,7 @@ const RoleManagement = () => {
           ) : (
             <tr>
               <td colSpan="5" className="text-center">
-                No users found.
+                Không tìm thấy người dùng nào.
               </td>
             </tr>
           )}

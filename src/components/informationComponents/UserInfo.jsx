@@ -108,7 +108,7 @@ const UserInfo = () => {
   }
 
   return (
-    <div className="container py-5">
+    <div className="container py-3">
       {user && user.username ? (
         !isEditing ? (
           <>
