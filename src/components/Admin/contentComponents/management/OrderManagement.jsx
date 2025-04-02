@@ -134,6 +134,9 @@ const OrderManagement = () => {
                     onChange={(e) =>
                       handleUpdateStatus(order._id, e.target.value)
                     }
+                    disabled={
+                      order.status === "Đã hủy" || order.status === "Đã giao"
+                    }
                     className="form-select form-select-sm"
                   >
                     <option value="Đang xử lý">Đang xử lý</option>
