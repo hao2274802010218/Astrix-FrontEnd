@@ -110,6 +110,7 @@ const RoleManagement = () => {
                   <button
                     className="btn btn-primary btn-sm"
                     onClick={() => handleRoleUpdate(user._id)}
+                    disabled={index === 0}
                   >
                     Confirm
                   </button>
