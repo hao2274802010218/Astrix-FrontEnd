@@ -94,6 +94,7 @@ const RoleManagement = () => {
                   <select
                     className="form-select"
                     value={pendingRoles[user._id] || user.role}
+                    disabled={index === 0}
                     onChange={(e) =>
                       setPendingRoles((prevPendingRoles) => ({
                         ...prevPendingRoles,

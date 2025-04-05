@@ -18,6 +18,17 @@ const Checkout = () => {
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const paymentStatus = urlParams.get("payment");
+    if (paymentStatus === "success") {
+      alert("Thanh toán thành công! Đơn hàng của bạn đã được xử lý.");
+      setCart([]);
+    } else if (paymentStatus === "failed") {
+      alert("Thanh toán thất bại. Vui lòng thử lại.");
+    }
+  }, []);
+
+  useEffect(() => {
     const fetchCart = async () => {
       try {
         if (!whatYouId) {
@@ -72,33 +83,64 @@ const Checkout = () => {
     }
 
     setIsLoading(true);
+    const total = cart.reduce(
+      (acc, item) => acc + item.price * (item.quantity || 1),
+      0
+    );
     const orderData = {
-      ...formData,
+      userId: whatYouId,
       cart,
-      total: cart.reduce(
-        (acc, item) => acc + item.price * (item.quantity || 1),
-        0
-      ),
+      total,
+      username: formData.username,
+      phone: formData.phone,
+      email: formData.email,
+      address: formData.address,
+      note: formData.note,
+      paymentMethod: formData.paymentMethod,
     };
 
     try {
-      const response = await fetch("http://localhost:5000/api/checkout/order", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(orderData),
-      });
+      if (formData.paymentMethod === "Payos") {
+        const response = await fetch(
+          "http://localhost:5000/api/payos/create-payment-link",
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(orderData),
+          }
+        );
+        const text = await response.text();
 
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.message || "Lỗi khi đặt hàng!");
+        if (!response.ok) {
+          throw new Error(`Lỗi khi tạo link thanh toán Payos! `);
+        }
+        const paymentData = JSON.parse(text);
+
+        window.location.href = paymentData.checkoutUrl;
+      } else {
+        const response = await fetch(
+          "http://localhost:5000/api/checkout/order",
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(orderData),
+          }
+        );
+
+        if (!response.ok) {
+          const errorData = await response.json();
+          throw new Error(errorData.message || "Lỗi khi đặt hàng!");
+        }
+
+        await response.json();
+        alert("Đơn hàng của bạn đã được đặt thành công!");
+        await clearCart();
+        navigate("/cart");
       }
-
-      await response.json();
-      alert("Đơn hàng của bạn đã được đặt thành công!");
-      await clearCart();
-      navigate("/cart");
     } catch (error) {
       console.error("Checkout error:", error.message);
       alert(`Đã xảy ra lỗi: ${error.message}`);
