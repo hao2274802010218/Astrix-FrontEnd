@@ -53,10 +53,18 @@ const UserInfo = () => {
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setFormData((prevData) => ({
-      ...prevData,
-      [name]: value,
-    }));
+    if (name === "phone") {
+      const cleanedValue = value.replace(/[^0-9]/g, "").slice(0, 10);
+      setFormData((prevData) => ({
+        ...prevData,
+        [name]: cleanedValue,
+      }));
+    } else {
+      setFormData((prevData) => ({
+        ...prevData,
+        [name]: value,
+      }));
+    }
   };
 
   const handleUpdate = async () => {
@@ -64,6 +72,11 @@ const UserInfo = () => {
     if (!token) {
       setError("Bạn chưa đăng nhập! Vui lòng đăng nhập lại.");
       navigate("/login");
+      return;
+    }
+
+    if (formData.phone && formData.phone.length !== 10) {
+      alert("Số điện thoại không hợp lệ!");
       return;
     }
 
@@ -87,7 +100,6 @@ const UserInfo = () => {
       setUser(data.user);
       setIsEditing(false);
     } catch (error) {
-      console.error("Lỗi cập nhật:", error.message);
       alert("Lỗi cập nhật: " + error.message);
     }
   };
@@ -160,12 +172,15 @@ const UserInfo = () => {
             <div className="mb-3">
               <label className="form-label">Số điện thoại</label>
               <input
-                type="text"
+                type="tel"
                 name="phone"
                 value={formData.phone}
                 onChange={handleInputChange}
                 className="form-control"
-                placeholder="Số điện thoại"
+                placeholder="Số điện thoại (10 số)"
+                pattern="[0-9]{10}"
+                maxLength="10"
+                required
               />
             </div>
             <div className="mb-3">
